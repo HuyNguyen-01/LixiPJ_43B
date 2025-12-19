@@ -70,7 +70,7 @@ void setup()
 
     ui_init();
 
-    lv_img_set_src(ui_SC1backGround, "S:/Backgroud.jpg");
+    //lv_img_set_src(ui_SC1backGround, "S:/Backgroud.jpg");
     lv_img_set_src(ui_SC2backGround, "S:/Backgroud2.jpg");
     /* Release the mutex */
     lvgl_port_unlock();

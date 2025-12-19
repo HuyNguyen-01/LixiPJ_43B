@@ -117,6 +117,8 @@ void ui_Screen2_screen_init(void)
     lv_obj_set_style_radius(ui_SC2ButtonRoll, 125, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_SC2ButtonRoll, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_SC2ButtonRoll, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_SC2ButtonRoll, lv_color_hex(0xFFF69C), LV_PART_MAIN | LV_STATE_PRESSED);
+    lv_obj_set_style_bg_opa(ui_SC2ButtonRoll, 100, LV_PART_MAIN | LV_STATE_PRESSED);
 
     lv_obj_add_event_cb(ui_SC2ButtonSetting, ui_event_SC2ButtonSetting, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_SC2ButtonScreen1, ui_event_SC2ButtonScreen1, LV_EVENT_ALL, NULL);

@@ -58,7 +58,7 @@ void ui_RollOffine(lv_event_t * e)
 
   if (lottery_timer == NULL) {
       // Tạo timer chạy mỗi 100ms
-      lottery_timer = lv_timer_create(lottery_timer_cb, 1000, NULL);
+      lottery_timer = lv_timer_create(lottery_timer_cb, 100, NULL);
   } else {
       // Nếu timer đã có, cho phép nó hoạt động trở lại
       lv_timer_resume(lottery_timer);
