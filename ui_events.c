@@ -39,7 +39,7 @@ void lottery_timer_cb(lv_timer_t * timer) {
     lv_label_set_text(ui_SC1LabelTienLixi, money_strings[random_index]);
 
     // 3. Kiểm tra thời gian để dừng (2 giây = 2000ms)
-    if (lv_tick_elaps(start_time) >= 2000) {
+    if (lv_tick_elaps(start_time) >= 5000) {
         lv_timer_pause(timer);
         
         // Hiệu ứng dừng: đổi màu chữ sang vàng hoặc đỏ cho nổi bật
@@ -58,7 +58,7 @@ void ui_RollOffine(lv_event_t * e)
 
   if (lottery_timer == NULL) {
       // Tạo timer chạy mỗi 100ms
-      lottery_timer = lv_timer_create(lottery_timer_cb, 100, NULL);
+      lottery_timer = lv_timer_create(lottery_timer_cb, 1000, NULL);
   } else {
       // Nếu timer đã có, cho phép nó hoạt động trở lại
       lv_timer_resume(lottery_timer);
@@ -100,10 +100,7 @@ void ui_HideKeyboard(lv_event_t * e)
 	// Your code here
 }
 
-void SavePreScreen(lv_event_t * e)
-{
-	 
-}
+
 
 void SavePreChangeSettingScreen(lv_event_t * e)
 {

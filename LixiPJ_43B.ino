@@ -71,16 +71,7 @@ void setup()
     ui_init();
 
     lv_img_set_src(ui_SC1backGround, "S:/Backgroud.jpg");
-    lv_img_set_src(ui_SC1ImageBanner, "S:/Banner.jpg");
-   
-    lv_imgbtn_set_src(ui_SC1ImgButtonRoll, LV_IMGBTN_STATE_RELEASED, NULL, "S:/Lixi_Button_Release.jpg", NULL);
-    lv_imgbtn_set_src(ui_SC1ImgButtonRoll, LV_IMGBTN_STATE_PRESSED, NULL, "S:/Lixi_Button_Press.jpg", NULL);\
-
     lv_img_set_src(ui_SC2backGround, "S:/Backgroud2.jpg");
-   
-    lv_imgbtn_set_src(ui_SC2ImgButtonRoll, LV_IMGBTN_STATE_RELEASED, NULL, "S:/Lixi_Button_Release_230.jpg", NULL);
-    lv_imgbtn_set_src(ui_SC2ImgButtonRoll, LV_IMGBTN_STATE_PRESSED, NULL, "S:/Lixi_Button_Press_230.jpg", NULL);
-
     /* Release the mutex */
     lvgl_port_unlock();
 }

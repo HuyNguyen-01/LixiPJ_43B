@@ -15,10 +15,7 @@ extern void ui_Screen1_screen_init(void);
 extern void ui_Screen1_screen_destroy(void);
 extern lv_obj_t * ui_Screen1;
 extern lv_obj_t * ui_SC1backGround;
-extern lv_obj_t * ui_SC1ImageBanner;
 extern lv_obj_t * ui_SC1LabelTienLixi;
-extern void ui_event_SC1ImgButtonRoll(lv_event_t * e);
-extern lv_obj_t * ui_SC1ImgButtonRoll;
 extern lv_obj_t * ui_SC1LabelVersion;
 extern lv_obj_t * ui_SC1LabelIPAdress;
 extern lv_obj_t * ui_SC1LabelWifi;
@@ -26,6 +23,8 @@ extern void ui_event_SC1ButtonSetting(lv_event_t * e);
 extern lv_obj_t * ui_SC1ButtonSetting;
 extern void ui_event_SC1ButtonScreen2(lv_event_t * e);
 extern lv_obj_t * ui_SC1ButtonScreen2;
+extern void ui_event_SC1ButtonRoll(lv_event_t * e);
+extern lv_obj_t * ui_SC1ButtonRoll;
 // CUSTOM VARIABLES
 
 #ifdef __cplusplus
