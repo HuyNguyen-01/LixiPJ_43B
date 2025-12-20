@@ -14,7 +14,7 @@ extern "C" {
 extern void ui_Screen1_screen_init(void);
 extern void ui_Screen1_screen_destroy(void);
 extern lv_obj_t * ui_Screen1;
-extern lv_obj_t * ui_SC1backGround;
+extern lv_obj_t * ui_ImgBackground1;
 extern lv_obj_t * ui_SC1LabelTienLixi;
 extern lv_obj_t * ui_SC1LabelVersion;
 extern lv_obj_t * ui_SC1LabelIPAdress;
@@ -25,6 +25,7 @@ extern void ui_event_SC1ButtonScreen2(lv_event_t * e);
 extern lv_obj_t * ui_SC1ButtonScreen2;
 extern void ui_event_SC1ButtonRoll(lv_event_t * e);
 extern lv_obj_t * ui_SC1ButtonRoll;
+extern lv_obj_t * ui_Roller1;
 // CUSTOM VARIABLES
 
 #ifdef __cplusplus

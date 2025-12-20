@@ -14,7 +14,7 @@ extern "C" {
 extern void ui_Screen2_screen_init(void);
 extern void ui_Screen2_screen_destroy(void);
 extern lv_obj_t * ui_Screen2;
-extern lv_obj_t * ui_SC2backGround;
+extern lv_obj_t * ui_ImgBackground3;
 extern lv_obj_t * ui_SC2LabelVersion;
 extern lv_obj_t * ui_SC2LabelIPAdress;
 extern lv_obj_t * ui_SC2LabelWifi;

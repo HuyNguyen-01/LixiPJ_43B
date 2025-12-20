@@ -43,7 +43,7 @@ void lottery_timer_cb(lv_timer_t * timer) {
         lv_timer_pause(timer);
         
         // Hiệu ứng dừng: đổi màu chữ sang vàng hoặc đỏ cho nổi bật
-        //lv_obj_set_style_text_color(ui_SC1LabelTienLixi, lv_palette_main(LV_PALETTE_AMBER), 0);
+        lv_obj_set_style_text_color(ui_SC1LabelTienLixi, lv_palette_main(LV_PALETTE_AMBER), 0);
     }
 }
 
@@ -51,18 +51,16 @@ void lottery_timer_cb(lv_timer_t * timer) {
 
 void ui_RollOffine(lv_event_t * e)
 {
-	start_time = lv_tick_get(); // Lưu mốc thời gian bắt đầu quay
-    
-  // Reset màu chữ về mặc định (ví dụ màu trắng hoặc đen tùy giao diện của bạn)
-  //lv_obj_set_style_text_color(ui_Label1, lv_color_hex(0xFFFFFF), 0); 
+// 1. Chọn ngẫu nhiên index từ 0 đến 9
+    int target_index = rand() % 10;
 
-  if (lottery_timer == NULL) {
-      // Tạo timer chạy mỗi 100ms
-      lottery_timer = lv_timer_create(lottery_timer_cb, 100, NULL);
-  } else {
-      // Nếu timer đã có, cho phép nó hoạt động trở lại
-      lv_timer_resume(lottery_timer);
-  }
+    // 2. Thiết lập thời gian quay (2 giây là vừa đẹp cho 10 phần tử)
+    // Tăng tốc độ phản hồi để người dùng không cảm thấy lag
+    lv_obj_set_style_anim_time(ui_Roller1, 2000, 0);
+
+    // 3. Ra lệnh cho Roller trượt đến vị trí mục tiêu
+    // LV_ANIM_ON sẽ tự động kích hoạt bộ máy Animation của LVGL
+    lv_roller_set_selected(ui_Roller1, target_index, LV_ANIM_ON);
 }
 
 void ui_RollOnline(lv_event_t * e)

@@ -6,7 +6,7 @@
 #include "ui.h"
 
 lv_obj_t * ui_Screen2 = NULL;
-lv_obj_t * ui_SC2backGround = NULL;
+lv_obj_t * ui_ImgBackground3 = NULL;
 lv_obj_t * ui_SC2LabelVersion = NULL;
 lv_obj_t * ui_SC2LabelIPAdress = NULL;
 lv_obj_t * ui_SC2LabelWifi = NULL;
@@ -48,12 +48,15 @@ void ui_Screen2_screen_init(void)
     ui_Screen2 = lv_obj_create(NULL);
     lv_obj_clear_flag(ui_Screen2, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
-    ui_SC2backGround = lv_img_create(ui_Screen2);
-    lv_obj_set_width(ui_SC2backGround, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_SC2backGround, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_align(ui_SC2backGround, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_SC2backGround, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
-    lv_obj_clear_flag(ui_SC2backGround, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    ui_ImgBackground3 = lv_img_create(ui_Screen2);
+    lv_img_set_src(ui_ImgBackground3, ui_img_picture14_800_png);
+    lv_obj_set_width(ui_ImgBackground3, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_ImgBackground3, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_ImgBackground3, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_ImgBackground3, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_clear_flag(ui_ImgBackground3,
+                      LV_OBJ_FLAG_PRESS_LOCK | LV_OBJ_FLAG_CLICK_FOCUSABLE | LV_OBJ_FLAG_GESTURE_BUBBLE | LV_OBJ_FLAG_SNAPPABLE |
+                      LV_OBJ_FLAG_SCROLLABLE);     /// Flags
 
     ui_SC2LabelVersion = lv_label_create(ui_Screen2);
     lv_obj_set_width(ui_SC2LabelVersion, LV_SIZE_CONTENT);   /// 1
@@ -132,7 +135,7 @@ void ui_Screen2_screen_destroy(void)
 
     // NULL screen variables
     ui_Screen2 = NULL;
-    ui_SC2backGround = NULL;
+    ui_ImgBackground3 = NULL;
     ui_SC2LabelVersion = NULL;
     ui_SC2LabelIPAdress = NULL;
     ui_SC2LabelWifi = NULL;

@@ -6,7 +6,7 @@
 
 //-------Modify include-------------------------
 #include "ui.h"
-#include <SPIFFS.h>
+#include "LittleFS.h"
 #include "ui_Screen1.h"
 #include "ui_Screen2.h"
 #include "lv_fs_spiffs.h"
@@ -17,7 +17,7 @@ using namespace esp_panel::board;
 
 
 //----Modify extern----------
-extern void lv_fs_spiffs_init(void);
+extern void lv_fs_littlefs_init(void);
 
 //----Modify Variable
 
@@ -27,6 +27,13 @@ void setup()
     String title = "LVGL porting example";
 
     Serial.begin(115200);
+
+    // 1. Khởi tạo bộ nhớ tệp trước
+    if (!LittleFS.begin(true)) {
+        Serial.println("LittleFS Mount Failed");
+    } else {
+        Serial.println("LittleFS Mounted");
+    }
 
     Serial.println("Initializing board");
     Board *board = new Board();
@@ -57,27 +64,29 @@ void setup()
     /* Lock the mutex due to the LVGL APIs are not thread-safe */
     lvgl_port_lock(-1);
 
-    lv_split_jpeg_init();
+    // lv_split_jpeg_init();
     
-    if (!SPIFFS.begin(true)) {
-      Serial.println("SPIFFS Mount Failed");
-    } 
-    else {
-      Serial.println("SPIFFS Mounted");
-    }
+    // if (!SPIFFS.begin(true)) {
+    //   Serial.println("SPIFFS Mount Failed");
+    // } 
+    // else {
+    //   Serial.println("SPIFFS Mounted");
+    // }
 
-    lv_fs_spiffs_init();
-
+    //lv_fs_spiffs_init();
+    lv_fs_littlefs_init();
     ui_init();
 
     //lv_img_set_src(ui_SC1backGround, "S:/Backgroud.jpg");
-    lv_img_set_src(ui_SC2backGround, "S:/Backgroud2.jpg");
+    //lv_img_set_src(ui_SC2backGround, "S:/Backgroud2.jpg");
     /* Release the mutex */
     lvgl_port_unlock();
+ 
+
 }
 
 void loop()
 {
-    Serial.println("IDLE loop");
+   
     delay(1000);
 }
