@@ -27,9 +27,9 @@ extern "C" {
 
 ///////////////////// SCREENS ////////////////////
 
-#include "ui_Screen1.h"
-#include "ui_Screen2.h"
 #include "ui_Screen3.h"
+#include "ui_Screen4.h"
+#include "ui_Screen5.h"
 
 ///////////////////// VARIABLES ////////////////////
 
@@ -39,8 +39,12 @@ extern "C" {
 extern lv_obj_t * ui____initial_actions0;
 
 // IMAGES AND IMAGE SETS
-extern const char * ui_img_picture13_800_png;  // assets/Picture13_800.png
-extern const char * ui_img_picture14_800_png;  // assets/Picture14_800.png
+extern const char * ui_img_13_png;  // assets/13.png
+extern const char * ui_img_14_png;  // assets/14.png
+extern const char * ui_img_tieude_430x115_png;  // assets/TieuDe_430x115.png
+extern const char * ui_img_16_png;  // assets/16.png
+extern const char * ui_img_17_png;  // assets/17.png
+extern const char * ui_img_19_png;  // assets/19.png
 
 // UI INIT
 void ui_init(void);

@@ -4,63 +4,46 @@
 // Project name: Lixi_Project
 
 #include "ui.h"
+#include <Arduino.h>
 
 //Modify Include-----------------
 
 #include <stdlib.h>
+//Modify Extern
+extern void saveConfig_c(const char* ssid, const char* pass, const char* ip);
 
 //Modify Varible
 lv_obj_t * ui_prev_screen = NULL;
 
-// Mảng các chuỗi ký tự tiền
-static const char * money_strings[] = {
-    "10.000", 
-    "20.000", 
-    "30.000", 
-    "50.000", 
-    "100.000", 
-    "200.000", 
-    "500.000"
-};
-// Tính số lượng phần tử trong mảng
-static int money_count = sizeof(money_strings) / sizeof(money_strings[0]);
+static const uint16_t money_list[] = {10, 20, 50, 100, 200, 500};
+#define MONEY_COUNT (sizeof(money_list) / sizeof(money_list[0]))
 
-static lv_timer_t * lottery_timer = NULL;
-static uint32_t start_time = 0;
+
 
 //Modify Function---------------------------
 
-void lottery_timer_cb(lv_timer_t * timer) {
-    // 1. Lấy chỉ số ngẫu nhiên
-    int random_index = rand() % money_count;
 
-    // 2. Cập nhật nhãn bằng chuỗi từ mảng
-    // Giả sử nhãn của bạn trong SquareLine tên là Label1 -> ui_Label1
-    lv_label_set_text(ui_SC1LabelTienLixi, money_strings[random_index]);
-
-    // 3. Kiểm tra thời gian để dừng (2 giây = 2000ms)
-    if (lv_tick_elaps(start_time) >= 5000) {
-        lv_timer_pause(timer);
-        
-        // Hiệu ứng dừng: đổi màu chữ sang vàng hoặc đỏ cho nổi bật
-        lv_obj_set_style_text_color(ui_SC1LabelTienLixi, lv_palette_main(LV_PALETTE_AMBER), 0);
-    }
-}
 
 ////////////////////////////////////
 
-void ui_RollOffine(lv_event_t * e)
+void ui_RollOffline(lv_event_t * e)
 {
-// 1. Chọn ngẫu nhiên index từ 0 đến 9
-    int target_index = rand() % 10;
+  
+    uint16_t value = money_list[rand() % MONEY_COUNT];
 
-    // 2. Thiết lập thời gian quay (2 giây là vừa đẹp cho 10 phần tử)
-    // Tăng tốc độ phản hồi để người dùng không cảm thấy lag
-    lv_obj_set_style_anim_time(ui_Roller1, 2000, 0);
+    /* 2. Phân tích hàng số */
+    uint8_t hundreds = value / 100;
+    uint8_t tens     = (value / 10) % 10;
+    uint8_t ones     = value % 10;
 
-    // 3. Ra lệnh cho Roller trượt đến vị trí mục tiêu
-    // LV_ANIM_ON sẽ tự động kích hoạt bộ máy Animation của LVGL
-    lv_roller_set_selected(ui_Roller1, target_index, LV_ANIM_ON);
+    lv_obj_set_style_anim_time(ui_RollerHundreds, 4000, 0);
+    lv_obj_set_style_anim_time(ui_RollerTens, 3000, 0);
+    lv_obj_set_style_anim_time(ui_RollerOnes, 2000, 0);
+
+    /* 4. Chọn item mục tiêu với animation */
+    lv_roller_set_selected(ui_RollerHundreds, hundreds+10, LV_ANIM_ON);
+    lv_roller_set_selected(ui_RollerTens, tens+10, LV_ANIM_ON);
+    lv_roller_set_selected(ui_RollerOnes, ones+10, LV_ANIM_ON);
 }
 
 void ui_RollOnline(lv_event_t * e)
@@ -75,13 +58,13 @@ void ui_BackToPreScreen(lv_event_t * e)
       // ui_Label1 đã có sẵn trong ui.h nên bạn gọi trực tiếp được
       lv_label_set_text(ui_Label1, "LOI");
   } 
-  else if (ui_prev_screen == ui_Screen1) {
+  else if (ui_prev_screen == ui_Screen4) {
       // Nếu là Screen 1
-      _ui_screen_change(&ui_Screen1, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Screen1_screen_init);
+      _ui_screen_change(&ui_Screen4, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Screen4_screen_init);
   } 
-  else if (ui_prev_screen == ui_Screen2) {
+  else if (ui_prev_screen == ui_Screen5) {
       // Nếu là Screen 2
-      _ui_screen_change(&ui_Screen2, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Screen2_screen_init);
+      _ui_screen_change(&ui_Screen5, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Screen5_screen_init);
   }
   else if (ui_prev_screen == ui_Screen3) {
       lv_label_set_text(ui_Label1, "SCREEN3");
@@ -90,7 +73,12 @@ void ui_BackToPreScreen(lv_event_t * e)
 
 void ui_ApplySetting(lv_event_t * e)
 {
-	// Your code here
+	const char * s = lv_textarea_get_text(ui_TextAreWifiName);
+  const char * p = lv_textarea_get_text(ui_TextAreWifiPass);
+  const char * i = lv_textarea_get_text(ui_TextAreIP);
+
+  // Gọi hàm đã khai báo extern
+  saveConfig_c(s, p, i);
 }
 
 void ui_HideKeyboard(lv_event_t * e)
@@ -105,3 +93,5 @@ void SavePreChangeSettingScreen(lv_event_t * e)
   ui_prev_screen = lv_scr_act();
   _ui_screen_change(&ui_Screen3, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Screen3_screen_init);
 }
+
+

@@ -10,12 +10,12 @@
 extern "C" {
 #endif
 
-void SavePreChangeSettingScreen(lv_event_t * e);
-void ui_RollOffine(lv_event_t * e);
-void ui_RollOnline(lv_event_t * e);
 void ui_BackToPreScreen(lv_event_t * e);
 void ui_ApplySetting(lv_event_t * e);
 void ui_HideKeyboard(lv_event_t * e);
+void ui_RollOffline(lv_event_t * e);
+void SavePreChangeSettingScreen(lv_event_t * e);
+void ui_RollOnline(lv_event_t * e);
 
 #ifdef __cplusplus
 } /*extern "C"*/

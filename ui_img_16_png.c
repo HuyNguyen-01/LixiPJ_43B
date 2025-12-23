@@ -6,5 +6,5 @@
 #include "ui.h"
 
 
-// IMAGE DATA: assets/Picture14_800.png
-const char * ui_img_picture14_800_png = "S:assets/ui_img_picture14_800_png.bin";
+// IMAGE DATA: assets/16.png
+const char * ui_img_16_png = "S:assets/16.bin";

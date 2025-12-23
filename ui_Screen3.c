@@ -18,7 +18,25 @@ lv_obj_t * ui_Label4 = NULL;
 lv_obj_t * ui_TextAreWifiPass = NULL;
 lv_obj_t * ui_TextAreIP = NULL;
 lv_obj_t * ui_Label6 = NULL;
+lv_obj_t * ui_Label9 = NULL;
+lv_obj_t * ui_TextAreGateway = NULL;
+lv_obj_t * ui_Label10 = NULL;
+lv_obj_t * ui_TextAreSubnet = NULL;
+lv_obj_t * ui_CheckboxDHCP = NULL;
+lv_obj_t * ui_Label11 = NULL;
+lv_obj_t * ui_Checkbox1000 = NULL;
+lv_obj_t * ui_Checkbox2000 = NULL;
+lv_obj_t * ui_Checkbox5000 = NULL;
+lv_obj_t * ui_Checkbox10000 = NULL;
+lv_obj_t * ui_Checkbox20000 = NULL;
+lv_obj_t * ui_Checkbox50000 = NULL;
+lv_obj_t * ui_Checkbox100000 = NULL;
+lv_obj_t * ui_Checkbox200000 = NULL;
+lv_obj_t * ui_Checkbox500000 = NULL;
+lv_obj_t * ui_DropdownRollTime = NULL;
+lv_obj_t * ui_Label12 = NULL;
 lv_obj_t * ui_Keyboard2 = NULL;
+lv_obj_t * ui_LabelSuccess = NULL;
 // event funtions
 void ui_event_ButtonSettingBack(lv_event_t * e)
 {
@@ -71,6 +89,32 @@ void ui_event_TextAreIP(lv_event_t * e)
     if(event_code == LV_EVENT_FOCUSED) {
         _ui_basic_set_property(ui_Keyboard2, _UI_BASIC_PROPERTY_POSITION_Y,  0);
         _ui_keyboard_set_target(ui_Keyboard2,  ui_TextAreIP);
+    }
+    if(event_code == LV_EVENT_DEFOCUSED) {
+        _ui_basic_set_property(ui_Keyboard2, _UI_BASIC_PROPERTY_POSITION_Y,  300);
+    }
+}
+
+void ui_event_TextAreGateway(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_FOCUSED) {
+        _ui_basic_set_property(ui_Keyboard2, _UI_BASIC_PROPERTY_POSITION_Y,  0);
+        _ui_keyboard_set_target(ui_Keyboard2,  ui_TextAreGateway);
+    }
+    if(event_code == LV_EVENT_DEFOCUSED) {
+        _ui_basic_set_property(ui_Keyboard2, _UI_BASIC_PROPERTY_POSITION_Y,  300);
+    }
+}
+
+void ui_event_TextAreSubnet(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_FOCUSED) {
+        _ui_basic_set_property(ui_Keyboard2, _UI_BASIC_PROPERTY_POSITION_Y,  0);
+        _ui_keyboard_set_target(ui_Keyboard2,  ui_TextAreSubnet);
     }
     if(event_code == LV_EVENT_DEFOCUSED) {
         _ui_basic_set_property(ui_Keyboard2, _UI_BASIC_PROPERTY_POSITION_Y,  300);
@@ -150,9 +194,9 @@ void ui_Screen3_screen_init(void)
     lv_obj_set_style_border_opa(ui_Panel2, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_TextAreWifiName = lv_textarea_create(ui_Panel2);
-    lv_obj_set_width(ui_TextAreWifiName, 240);
+    lv_obj_set_width(ui_TextAreWifiName, 160);
     lv_obj_set_height(ui_TextAreWifiName, LV_SIZE_CONTENT);    /// 52
-    lv_obj_set_x(ui_TextAreWifiName, -90);
+    lv_obj_set_x(ui_TextAreWifiName, -177);
     lv_obj_set_y(ui_TextAreWifiName, -170);
     lv_obj_set_align(ui_TextAreWifiName, LV_ALIGN_CENTER);
     lv_textarea_set_placeholder_text(ui_TextAreWifiName, "WiFI Name");
@@ -170,26 +214,26 @@ void ui_Screen3_screen_init(void)
     ui_Label4 = lv_label_create(ui_Panel2);
     lv_obj_set_width(ui_Label4, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_Label4, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_Label4, -313);
-    lv_obj_set_y(ui_Label4, -110);
+    lv_obj_set_x(ui_Label4, 16);
+    lv_obj_set_y(ui_Label4, -169);
     lv_obj_set_align(ui_Label4, LV_ALIGN_CENTER);
     lv_label_set_text(ui_Label4, "Wifi Password");
     lv_obj_set_style_text_font(ui_Label4, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_TextAreWifiPass = lv_textarea_create(ui_Panel2);
-    lv_obj_set_width(ui_TextAreWifiPass, 240);
+    lv_obj_set_width(ui_TextAreWifiPass, 160);
     lv_obj_set_height(ui_TextAreWifiPass, LV_SIZE_CONTENT);    /// 52
-    lv_obj_set_x(ui_TextAreWifiPass, -90);
-    lv_obj_set_y(ui_TextAreWifiPass, -110);
+    lv_obj_set_x(ui_TextAreWifiPass, 190);
+    lv_obj_set_y(ui_TextAreWifiPass, -170);
     lv_obj_set_align(ui_TextAreWifiPass, LV_ALIGN_CENTER);
     lv_textarea_set_placeholder_text(ui_TextAreWifiPass, "WiFI Password");
     lv_textarea_set_one_line(ui_TextAreWifiPass, true);
 
     ui_TextAreIP = lv_textarea_create(ui_Panel2);
-    lv_obj_set_width(ui_TextAreIP, 240);
+    lv_obj_set_width(ui_TextAreIP, 160);
     lv_obj_set_height(ui_TextAreIP, LV_SIZE_CONTENT);    /// 52
-    lv_obj_set_x(ui_TextAreIP, -90);
-    lv_obj_set_y(ui_TextAreIP, -50);
+    lv_obj_set_x(ui_TextAreIP, -177);
+    lv_obj_set_y(ui_TextAreIP, -110);
     lv_obj_set_align(ui_TextAreIP, LV_ALIGN_CENTER);
     lv_textarea_set_placeholder_text(ui_TextAreIP, "192.168.0.100");
     lv_textarea_set_one_line(ui_TextAreIP, true);
@@ -198,10 +242,173 @@ void ui_Screen3_screen_init(void)
     lv_obj_set_width(ui_Label6, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_Label6, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_x(ui_Label6, -329);
-    lv_obj_set_y(ui_Label6, -50);
+    lv_obj_set_y(ui_Label6, -110);
     lv_obj_set_align(ui_Label6, LV_ALIGN_CENTER);
     lv_label_set_text(ui_Label6, "IP Address");
     lv_obj_set_style_text_font(ui_Label6, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_Label9 = lv_label_create(ui_Panel2);
+    lv_obj_set_width(ui_Label9, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_Label9, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_Label9, 10);
+    lv_obj_set_y(ui_Label9, -110);
+    lv_obj_set_align(ui_Label9, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_Label9, "GateWay");
+    lv_obj_set_style_text_font(ui_Label9, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_TextAreGateway = lv_textarea_create(ui_Panel2);
+    lv_obj_set_width(ui_TextAreGateway, 160);
+    lv_obj_set_height(ui_TextAreGateway, LV_SIZE_CONTENT);    /// 52
+    lv_obj_set_x(ui_TextAreGateway, 190);
+    lv_obj_set_y(ui_TextAreGateway, -110);
+    lv_obj_set_align(ui_TextAreGateway, LV_ALIGN_CENTER);
+    lv_textarea_set_placeholder_text(ui_TextAreGateway, "192.168.0.1");
+    lv_textarea_set_one_line(ui_TextAreGateway, true);
+
+    ui_Label10 = lv_label_create(ui_Panel2);
+    lv_obj_set_width(ui_Label10, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_Label10, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_Label10, -330);
+    lv_obj_set_y(ui_Label10, -50);
+    lv_obj_set_align(ui_Label10, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_Label10, "Subnet");
+    lv_obj_set_style_text_font(ui_Label10, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_TextAreSubnet = lv_textarea_create(ui_Panel2);
+    lv_obj_set_width(ui_TextAreSubnet, 160);
+    lv_obj_set_height(ui_TextAreSubnet, LV_SIZE_CONTENT);    /// 52
+    lv_obj_set_x(ui_TextAreSubnet, -177);
+    lv_obj_set_y(ui_TextAreSubnet, -50);
+    lv_obj_set_align(ui_TextAreSubnet, LV_ALIGN_CENTER);
+    lv_textarea_set_placeholder_text(ui_TextAreSubnet, "255.255.255.0");
+    lv_textarea_set_one_line(ui_TextAreSubnet, true);
+
+    ui_CheckboxDHCP = lv_checkbox_create(ui_Panel2);
+    lv_checkbox_set_text(ui_CheckboxDHCP, "");
+    lv_obj_set_width(ui_CheckboxDHCP, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_CheckboxDHCP, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_CheckboxDHCP, 138);
+    lv_obj_set_y(ui_CheckboxDHCP, -50);
+    lv_obj_set_align(ui_CheckboxDHCP, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_CheckboxDHCP, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_set_style_text_font(ui_CheckboxDHCP, &lv_font_montserrat_30, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_Label11 = lv_label_create(ui_Panel2);
+    lv_obj_set_width(ui_Label11, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_Label11, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_Label11, 10);
+    lv_obj_set_y(ui_Label11, -50);
+    lv_obj_set_align(ui_Label11, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_Label11, "DHCP");
+    lv_obj_set_style_text_font(ui_Label11, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_Checkbox1000 = lv_checkbox_create(ui_Panel2);
+    lv_checkbox_set_text(ui_Checkbox1000, "1000");
+    lv_obj_set_width(ui_Checkbox1000, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_Checkbox1000, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_Checkbox1000, -350);
+    lv_obj_set_y(ui_Checkbox1000, 13);
+    lv_obj_set_align(ui_Checkbox1000, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_Checkbox1000, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_set_style_text_font(ui_Checkbox1000, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_Checkbox2000 = lv_checkbox_create(ui_Panel2);
+    lv_checkbox_set_text(ui_Checkbox2000, "2000");
+    lv_obj_set_width(ui_Checkbox2000, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_Checkbox2000, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_Checkbox2000, -270);
+    lv_obj_set_y(ui_Checkbox2000, 12);
+    lv_obj_set_align(ui_Checkbox2000, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_Checkbox2000, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_set_style_text_font(ui_Checkbox2000, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_Checkbox5000 = lv_checkbox_create(ui_Panel2);
+    lv_checkbox_set_text(ui_Checkbox5000, "5000");
+    lv_obj_set_width(ui_Checkbox5000, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_Checkbox5000, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_Checkbox5000, -190);
+    lv_obj_set_y(ui_Checkbox5000, 12);
+    lv_obj_set_align(ui_Checkbox5000, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_Checkbox5000, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_set_style_text_font(ui_Checkbox5000, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_Checkbox10000 = lv_checkbox_create(ui_Panel2);
+    lv_checkbox_set_text(ui_Checkbox10000, "10.000");
+    lv_obj_set_width(ui_Checkbox10000, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_Checkbox10000, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_Checkbox10000, -110);
+    lv_obj_set_y(ui_Checkbox10000, 12);
+    lv_obj_set_align(ui_Checkbox10000, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_Checkbox10000, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_set_style_text_font(ui_Checkbox10000, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_Checkbox20000 = lv_checkbox_create(ui_Panel2);
+    lv_checkbox_set_text(ui_Checkbox20000, "20.000");
+    lv_obj_set_width(ui_Checkbox20000, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_Checkbox20000, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_Checkbox20000, -20);
+    lv_obj_set_y(ui_Checkbox20000, 12);
+    lv_obj_set_align(ui_Checkbox20000, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_Checkbox20000, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_set_style_text_font(ui_Checkbox20000, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_Checkbox50000 = lv_checkbox_create(ui_Panel2);
+    lv_checkbox_set_text(ui_Checkbox50000, "50.000");
+    lv_obj_set_width(ui_Checkbox50000, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_Checkbox50000, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_Checkbox50000, 70);
+    lv_obj_set_y(ui_Checkbox50000, 12);
+    lv_obj_set_align(ui_Checkbox50000, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_Checkbox50000, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_set_style_text_font(ui_Checkbox50000, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_Checkbox100000 = lv_checkbox_create(ui_Panel2);
+    lv_checkbox_set_text(ui_Checkbox100000, "100.000");
+    lv_obj_set_width(ui_Checkbox100000, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_Checkbox100000, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_Checkbox100000, 160);
+    lv_obj_set_y(ui_Checkbox100000, 12);
+    lv_obj_set_align(ui_Checkbox100000, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_Checkbox100000, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_set_style_text_font(ui_Checkbox100000, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_Checkbox200000 = lv_checkbox_create(ui_Panel2);
+    lv_checkbox_set_text(ui_Checkbox200000, "200.000");
+    lv_obj_set_width(ui_Checkbox200000, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_Checkbox200000, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_Checkbox200000, 250);
+    lv_obj_set_y(ui_Checkbox200000, 12);
+    lv_obj_set_align(ui_Checkbox200000, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_Checkbox200000, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_set_style_text_font(ui_Checkbox200000, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_Checkbox500000 = lv_checkbox_create(ui_Panel2);
+    lv_checkbox_set_text(ui_Checkbox500000, "500.000");
+    lv_obj_set_width(ui_Checkbox500000, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_Checkbox500000, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_Checkbox500000, 340);
+    lv_obj_set_y(ui_Checkbox500000, 12);
+    lv_obj_set_align(ui_Checkbox500000, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_Checkbox500000, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_set_style_text_font(ui_Checkbox500000, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_DropdownRollTime = lv_dropdown_create(ui_Panel2);
+    lv_dropdown_set_options(ui_DropdownRollTime, "500\n1000\n2000\n3000");
+    lv_obj_set_width(ui_DropdownRollTime, 126);
+    lv_obj_set_height(ui_DropdownRollTime, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_DropdownRollTime, -163);
+    lv_obj_set_y(ui_DropdownRollTime, 60);
+    lv_obj_set_align(ui_DropdownRollTime, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_DropdownRollTime, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+
+    ui_Label12 = lv_label_create(ui_Panel2);
+    lv_obj_set_width(ui_Label12, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_Label12, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_Label12, -318);
+    lv_obj_set_y(ui_Label12, 60);
+    lv_obj_set_align(ui_Label12, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_Label12, "Rolling Time");
+    lv_obj_set_style_text_font(ui_Label12, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Keyboard2 = lv_keyboard_create(ui_Screen3);
     lv_obj_set_width(ui_Keyboard2, 800);
@@ -210,11 +417,26 @@ void ui_Screen3_screen_init(void)
     lv_obj_set_y(ui_Keyboard2, 300);
     lv_obj_set_align(ui_Keyboard2, LV_ALIGN_BOTTOM_MID);
 
+    ui_LabelSuccess = lv_label_create(ui_Screen3);
+    lv_obj_set_width(ui_LabelSuccess, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_LabelSuccess, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_LabelSuccess, 189);
+    lv_obj_set_y(ui_LabelSuccess, -207);
+    lv_obj_set_align(ui_LabelSuccess, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_LabelSuccess, "Seting thanh cong\nReset ESP");
+    lv_obj_add_flag(ui_LabelSuccess, LV_OBJ_FLAG_HIDDEN);     /// Flags
+    lv_obj_set_style_text_color(ui_LabelSuccess, lv_color_hex(0x29A141), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_LabelSuccess, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_align(ui_LabelSuccess, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_LabelSuccess, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+
     lv_obj_add_event_cb(ui_ButtonSettingBack, ui_event_ButtonSettingBack, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_ButtonSettingOK, ui_event_ButtonSettingOK, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_TextAreWifiName, ui_event_TextAreWifiName, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_TextAreWifiPass, ui_event_TextAreWifiPass, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_TextAreIP, ui_event_TextAreIP, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_TextAreGateway, ui_event_TextAreGateway, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_TextAreSubnet, ui_event_TextAreSubnet, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Keyboard2, ui_event_Keyboard2, LV_EVENT_ALL, NULL);
 
 }
@@ -237,6 +459,24 @@ void ui_Screen3_screen_destroy(void)
     ui_TextAreWifiPass = NULL;
     ui_TextAreIP = NULL;
     ui_Label6 = NULL;
+    ui_Label9 = NULL;
+    ui_TextAreGateway = NULL;
+    ui_Label10 = NULL;
+    ui_TextAreSubnet = NULL;
+    ui_CheckboxDHCP = NULL;
+    ui_Label11 = NULL;
+    ui_Checkbox1000 = NULL;
+    ui_Checkbox2000 = NULL;
+    ui_Checkbox5000 = NULL;
+    ui_Checkbox10000 = NULL;
+    ui_Checkbox20000 = NULL;
+    ui_Checkbox50000 = NULL;
+    ui_Checkbox100000 = NULL;
+    ui_Checkbox200000 = NULL;
+    ui_Checkbox500000 = NULL;
+    ui_DropdownRollTime = NULL;
+    ui_Label12 = NULL;
     ui_Keyboard2 = NULL;
+    ui_LabelSuccess = NULL;
 
 }

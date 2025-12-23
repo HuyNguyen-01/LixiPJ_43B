@@ -31,8 +31,28 @@ extern lv_obj_t * ui_TextAreWifiPass;
 extern void ui_event_TextAreIP(lv_event_t * e);
 extern lv_obj_t * ui_TextAreIP;
 extern lv_obj_t * ui_Label6;
+extern lv_obj_t * ui_Label9;
+extern void ui_event_TextAreGateway(lv_event_t * e);
+extern lv_obj_t * ui_TextAreGateway;
+extern lv_obj_t * ui_Label10;
+extern void ui_event_TextAreSubnet(lv_event_t * e);
+extern lv_obj_t * ui_TextAreSubnet;
+extern lv_obj_t * ui_CheckboxDHCP;
+extern lv_obj_t * ui_Label11;
+extern lv_obj_t * ui_Checkbox1000;
+extern lv_obj_t * ui_Checkbox2000;
+extern lv_obj_t * ui_Checkbox5000;
+extern lv_obj_t * ui_Checkbox10000;
+extern lv_obj_t * ui_Checkbox20000;
+extern lv_obj_t * ui_Checkbox50000;
+extern lv_obj_t * ui_Checkbox100000;
+extern lv_obj_t * ui_Checkbox200000;
+extern lv_obj_t * ui_Checkbox500000;
+extern lv_obj_t * ui_DropdownRollTime;
+extern lv_obj_t * ui_Label12;
 extern void ui_event_Keyboard2(lv_event_t * e);
 extern lv_obj_t * ui_Keyboard2;
+extern lv_obj_t * ui_LabelSuccess;
 // CUSTOM VARIABLES
 
 #ifdef __cplusplus
