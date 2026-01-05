@@ -113,6 +113,37 @@
         .btn-nhan:hover { transform: translateX(-50%) scale(1.1); }
         .btn-nhan:active { transform: translateX(-50%) scale(0.9); }
         .is-rolling { pointer-events: none; }
+
+                /* ===== MUSIC BUTTON ===== */
+        .music-btn {
+            position: absolute;
+            top: 5%;
+            right: 7%;
+            width: 5vw;
+            height: 5vw;
+            min-width: 40px;
+            min-height: 40px;
+            border-radius: 50%;
+            border: 2px solid #f3d291;
+            background: transparent;
+            color: #f3d291;
+            font-size: 2.5vw;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+        }
+
+        .music-btn.playing {
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
+        }
+
     </style>
 </head>
 <body>
@@ -128,6 +159,11 @@
         <div class="digit-column" id="col-6"></div>
     </div>
     <button class="btn-nhan" id="rollBtn" onclick="handleClick()"></button>
+        <!-- ===== MUSIC BUTTON ===== -->
+    <!-- ===== MUSIC BUTTON ===== -->
+    <button class="music-btn" id="musicBtn">♪</button>
+
+
 </div>
 
 <script>
@@ -247,6 +283,30 @@
             if (Date.now() < end) requestAnimationFrame(frame);
         }());
     }
+
+    /* ===== MUSIC BUTTON ===== */
+    const bgMusic = new Audio(
+      "https://raw.githubusercontent.com/HuyNguyen-01/LixiPJ_43B/main/resouce/1.mp3"
+    );
+    bgMusic.loop = true;
+
+    const musicBtn = document.getElementById("musicBtn");
+    let isMusicPlaying = false;
+
+    musicBtn.addEventListener("click", () => {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        if (!isMusicPlaying) {
+            bgMusic.play();
+            musicBtn.classList.add("playing");
+        } else {
+            bgMusic.pause();
+            bgMusic.currentTime = 0;
+            musicBtn.classList.remove("playing");
+        }
+
+        isMusicPlaying = !isMusicPlaying;
+    });
 </script>
 </body>
 </html>
