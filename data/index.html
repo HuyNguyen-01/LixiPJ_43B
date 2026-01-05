@@ -1,27 +1,252 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lì Xì Control</title>
+    <title>Lì Xì 4K Gold - Classic Audio Edition</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
     <style>
-        body {
-            background-color: #f44336; /* Màu đỏ Tết */
-            color: white;
-            font-family: Arial, sans-serif;
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            overflow: hidden;
+            background-color: #000;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
         }
-        h1 {
-            font-size: 3rem;
-            text-shadow: 2px 2px 4px #000000;
+
+        .main-container {
+            position: relative;
+            width: 100vw;
+            height: 56.25vw; 
+            max-height: 100vh;
+            max-width: 177.78vh; 
+            background-image: url('/Back.png');
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-position: center;
         }
+
+        #roller-container {
+            position: absolute;
+            top: 35%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            overflow: hidden;
+            height: 10vw;
+            pointer-events: none;
+        }
+
+        .digit-column {
+            position: relative;
+            width: 5vw;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            transition: transform 3s cubic-bezier(0.15, 0, 0.15, 1);
+        }
+
+        .digit {
+            height: 10vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 8vw;
+            font-weight: 900;
+            color: #f3d291;
+            font-family: 'Arial Black', sans-serif;
+            flex-shrink: 0;
+        }
+
+        .separator {
+            font-size: 8vw;
+            font-weight: 900;
+            color: #f3d291;
+            font-family: 'Arial Black', sans-serif;
+            display: flex;
+            align-items: center;
+            margin: 0 0.5vw;
+        }
+
+        .gold-active .digit, .gold-active .separator {
+            background: linear-gradient(
+                -45deg, 
+                #462523 0%, #cb9b51 22%, #f6e27a 45%, #f6f2c0 50%, #f6e27a 55%, #cb9b51 78%, #462523 100%
+            );
+            background-size: 400% 400%;
+            color: transparent !important;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: goldRoll 4s ease-in-out infinite;
+            filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.5));
+        }
+
+        @keyframes goldRoll {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .btn-nhan {
+            position: absolute;
+            bottom: 8%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 18%;
+            aspect-ratio: 1/1;
+            background-image: url('/But.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            outline: none;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 10;
+        }
+
+        .btn-nhan:hover { transform: translateX(-50%) scale(1.1); }
+        .btn-nhan:active { transform: translateX(-50%) scale(0.9); }
+        .is-rolling { pointer-events: none; }
     </style>
 </head>
 <body>
-    <h1>Hello các bạn! 🧧</h1>
+
+<div class="main-container">
+    <div id="roller-container">
+        <div class="digit-column" id="col-1"></div>
+        <div class="digit-column" id="col-2"></div>
+        <div class="digit-column" id="col-3"></div>
+        <div class="separator">.</div>
+        <div class="digit-column" id="col-4"></div>
+        <div class="digit-column" id="col-5"></div>
+        <div class="digit-column" id="col-6"></div>
+    </div>
+    <button class="btn-nhan" id="rollBtn" onclick="handleClick()"></button>
+</div>
+
+<script>
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    // Khôi phục tiếng "tích tích" điện tử cũ
+    function playTickSound() {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.1);
+    }
+
+    // Khôi phục tiếng chuông thắng giải vui tai
+    function playWinSound() {
+        const notes = [523.25, 659.25, 783.99, 1046.50]; // Đô - Mi - Sol - Đô
+        notes.forEach((freq, i) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime + i * 0.15);
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime + i * 0.15);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + i * 0.15 + 0.5);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(audioCtx.currentTime + i * 0.15);
+            osc.stop(audioCtx.currentTime + i * 0.15 + 0.5);
+        });
+    }
+
+    const denominations = ["010.000", "020.000", "050.000", "100.000", "200.000", "500.000"];
+    const columns = [
+        document.getElementById('col-1'), document.getElementById('col-2'), document.getElementById('col-3'),
+        document.getElementById('col-4'), document.getElementById('col-5'), document.getElementById('col-6')
+    ];
+    const rollerContainer = document.getElementById('roller-container');
+    const btn = document.getElementById('rollBtn');
+    let isRollingState = false;
+
+    function initColumns() {
+        columns.forEach(col => {
+            col.innerHTML = '';
+            for (let i = 0; i < 40; i++) {
+                const div = document.createElement('div');
+                div.className = 'digit';
+                div.innerText = Math.floor(Math.random() * 10);
+                col.appendChild(div);
+            }
+        });
+    }
+
+    initColumns();
+
+    function handleClick() {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        if (isRollingState) return;
+        startRolling();
+    }
+
+    function startRolling() {
+        isRollingState = true;
+        btn.classList.add('is-rolling');
+        rollerContainer.classList.remove('gold-active');
+
+        const resultStr = denominations[Math.floor(Math.random() * denominations.length)].replace('.', '');
+        const targetDigits = resultStr.split('');
+
+        // Tần suất click nhanh liên tục cho đến khi dừng
+        let tickInterval = setInterval(playTickSound, 100);
+
+        columns.forEach((col, index) => {
+            col.style.transition = 'none';
+            col.style.transform = 'translateY(0)';
+            col.offsetHeight; 
+
+            const lastDigit = col.lastElementChild;
+            lastDigit.innerText = targetDigits[index];
+
+            const moveY = (col.children.length - 1) * 10; 
+            col.style.transition = `transform ${2.5 + index * 0.3}s cubic-bezier(0.15, 0, 0.15, 1)`;
+            col.style.transform = `translateY(-${moveY}vw)`;
+        });
+
+        // Ngắt tiếng tick khi gần dừng hẳn
+        setTimeout(() => clearInterval(tickInterval), 2500);
+        setTimeout(() => finishRoll(), 4000);
+    }
+
+    function finishRoll() {
+        playWinSound();
+        rollerContainer.classList.add('gold-active');
+        fireworks();
+        setTimeout(() => { 
+            isRollingState = false;
+            btn.classList.remove('is-rolling');
+        }, 4000);
+    }
+
+    function fireworks() {
+        const duration = 3 * 1000;
+        const end = Date.now() + duration;
+        const colors = ['#FFD700', '#FFFFFF', '#FFA500'];
+
+        (function frame() {
+            confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0, y: 0.8 }, colors: colors });
+            confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1, y: 0.8 }, colors: colors });
+            if (Math.random() > 0.9) {
+                confetti({ particleCount: 50, startVelocity: 30, spread: 360, origin: { x: Math.random(), y: Math.random() * 0.5 }, colors: colors });
+            }
+            if (Date.now() < end) requestAnimationFrame(frame);
+        }());
+    }
+</script>
 </body>
 </html>
