@@ -9,9 +9,14 @@
 //Modify Include-----------------
 
 #include <stdlib.h>
+#include <esp_random.h>
 //Modify Extern
-extern void saveConfig_c(const char* ssid, const char* pass, const char* ip);
-
+extern void saveConfig_c(const char* ssid, const char* pass, const char* ip, const char* gateway, const char* subnet,
+                         bool dhcp, bool m1k, bool m2k, bool m5k, 
+                         bool m10k, bool m20k, bool m50k, 
+                         bool m100k, bool m200k, bool m500k);
+extern void send_spin_now_to_all_clients();
+extern uint32_t esp_random(void);
 //Modify Varible
 lv_obj_t * ui_prev_screen = NULL;
 
@@ -22,20 +27,44 @@ extern int active_money_count;
 
 
 //Modify Function---------------------------
-
-
-
+uint16_t get_money_weight(uint16_t value_k) {
+  uint32_t full_val = (uint32_t)value_k * 1000;
+  if (full_val >= 500000) return 12; // 500k
+  if (full_val >= 200000) return 25; // 200k
+  if (full_val >= 100000) return 50; // 100k
+  return 100; // Các mệnh giá < 100k (10k, 20k, 50k...)
+}
 ////////////////////////////////////
 
 void ui_RollOffline(lv_event_t * e)
 {
   
-    uint16_t value = money_list[rand() % active_money_count];
+    // uint16_t value = money_list[rand() % active_money_count];
+    if (active_money_count == 0) return; // Bảo vệ nếu chưa có tiền trong danh sách
+
+    // --- BƯỚC 1: TÍNH TỔNG TRỌNG SỐ (TOTAL WEIGHT) ---
+    uint32_t total_weight = 0;
+    for (int i = 0; i < active_money_count; i++) {
+      total_weight += get_money_weight(money_list[i]);
+    }
+
+    // --- BƯỚC 2: CHỌN NGẪU NHIÊN THEO TRỌNG SỐ ---
+    uint32_t r = esp_random() % total_weight; 
+    uint16_t selected_value = money_list[0]; // Mặc định
+
+    for (int i = 0; i < active_money_count; i++) {
+        uint16_t w = get_money_weight(money_list[i]);
+        if (r < w) {
+            selected_value = money_list[i];
+            break;
+        }
+        r -= w;
+    }
 
     /* 2. Phân tích hàng số */
-    uint8_t hundreds = value / 100;
-    uint8_t tens     = (value / 10) % 10;
-    uint8_t ones     = value % 10;
+    uint8_t hundreds = selected_value / 100;
+    uint8_t tens     = (selected_value / 10) % 10;
+    uint8_t ones     = selected_value % 10;
 
     lv_obj_set_style_anim_time(ui_RollerHundreds, 4000, 0);
     lv_obj_set_style_anim_time(ui_RollerTens, 3000, 0);
@@ -49,7 +78,7 @@ void ui_RollOffline(lv_event_t * e)
 
 void ui_RollOnline(lv_event_t * e)
 {
-	// Your code here
+	send_spin_now_to_all_clients();
 }
 
 void ui_BackToPreScreen(lv_event_t * e)
@@ -77,9 +106,22 @@ void ui_ApplySetting(lv_event_t * e)
 	const char * s = lv_textarea_get_text(ui_TextAreWifiName);
   const char * p = lv_textarea_get_text(ui_TextAreWifiPass);
   const char * i = lv_textarea_get_text(ui_TextAreIP);
+  const char * g = lv_textarea_get_text(ui_TextAreGateway); 
+  const char * sn = lv_textarea_get_text(ui_TextAreSubnet);
+
+  bool dhcp = lv_obj_has_state(ui_CheckboxDHCP, LV_STATE_CHECKED);
+  bool m1k  = lv_obj_has_state(ui_Checkbox1000, LV_STATE_CHECKED);
+  bool m2k  = lv_obj_has_state(ui_Checkbox2000, LV_STATE_CHECKED);
+  bool m5k  = lv_obj_has_state(ui_Checkbox5000, LV_STATE_CHECKED);
+  bool m10k = lv_obj_has_state(ui_Checkbox10000, LV_STATE_CHECKED);
+  bool m20k = lv_obj_has_state(ui_Checkbox20000, LV_STATE_CHECKED);
+  bool m50k = lv_obj_has_state(ui_Checkbox50000, LV_STATE_CHECKED);
+  bool m100k = lv_obj_has_state(ui_Checkbox100000, LV_STATE_CHECKED);
+  bool m200k = lv_obj_has_state(ui_Checkbox200000, LV_STATE_CHECKED);
+  bool m500k = lv_obj_has_state(ui_Checkbox500000, LV_STATE_CHECKED);
 
   // Gọi hàm đã khai báo extern
-  saveConfig_c(s, p, i);
+  saveConfig_c(s, p, i, g, sn, dhcp, m1k, m2k, m5k, m10k, m20k, m50k, m100k, m200k, m500k);
 }
 
 void ui_HideKeyboard(lv_event_t * e)

@@ -5,6 +5,7 @@
 #include <lvgl.h>
 #include "lvgl_v8_port.h"
 
+
 //-------Modify include-------------------------
 #include "ui.h"
 #include "LittleFS.h"
@@ -32,6 +33,8 @@ extern void lv_fs_littlefs_init(void);
 String global_ssid = "";
 String global_pass = "";
 String global_ip   = "";
+String global_gateway = ""; // Biến lưu địa chỉ Gateway
+String global_subnet  = "";
 bool global_dhcp;
 
 //Extern "C" Variable
@@ -66,6 +69,8 @@ void initAndLoadConfig() {
                 "ssid": "RD",
                 "pass": "Itdc@12345",
                 "ipadress": "192.168.5.100",
+                "gateway": "192.168.5.1",
+                "subnet": "255.255.255.0",
                 "dhcp": true,
                 "1000": false,
                 "2000": false,
@@ -99,6 +104,8 @@ void initAndLoadConfig() {
       global_ssid = doc["ssid"] | "";
       global_pass = doc["pass"] | "";
       global_ip   = doc["ipadress"] | "";
+      global_gateway = doc["gateway"] | "";  
+      global_subnet  = doc["subnet"] | ""; 
       global_dhcp = doc["dhcp"] | false;
 
       // 2. Xử lý các mệnh giá tiền
@@ -106,12 +113,12 @@ void initAndLoadConfig() {
       // Danh sách các key cần kiểm tra
       const char* money_keys[] = {"1000", "2000", "5000", "10000", "20000", "50000", "100000", "200000", "500000"};
       for (const char* key : money_keys) {
-          if (doc[key] == true) {
-              // Chuyển key từ chuỗi sang số, chia cho 1000 rồi lưu vào mảng
-              uint32_t full_value = atol(key); 
-              money_list[active_money_count] = (uint16_t)(full_value / 1000);
-              active_money_count++;
-          }
+        if (doc[key] == true) {
+          // Chuyển key từ chuỗi sang số, chia cho 1000 rồi lưu vào mảng
+          uint32_t full_value = atol(key); 
+          money_list[active_money_count] = (uint16_t)(full_value / 1000);
+          active_money_count++;
+        }
       }
 
 
@@ -119,11 +126,39 @@ void initAndLoadConfig() {
       Serial.printf("SSID: %s | IP: %s | DHCP: %s\n", 
                       global_ssid.c_str(), global_ip.c_str(), global_dhcp ? "Bật" : "Tắt");
       Serial.print("Mệnh giá kích hoạt (k): ");
-        for (int i = 0; i < active_money_count; i++) {
-          Serial.print(money_list[i]);
-          if (i < active_money_count - 1) Serial.print(", ");
-        }
-        Serial.println();
+      for (int i = 0; i < active_money_count; i++) {
+        Serial.print(money_list[i]);
+        if (i < active_money_count - 1) Serial.print(", ");
+      }
+      Serial.println();
+
+      //lOAD VÀO lvgl
+      if (ui_Screen3) { 
+          lv_textarea_set_text(ui_TextAreWifiName, global_ssid.c_str());
+          lv_textarea_set_text(ui_TextAreWifiPass, global_pass.c_str());
+          lv_textarea_set_text(ui_TextAreIP, global_ip.c_str());
+          lv_textarea_set_text(ui_TextAreGateway, global_gateway.c_str());
+          lv_textarea_set_text(ui_TextAreSubnet, global_subnet.c_str());
+          
+          auto setCB = [&](lv_obj_t* obj, const char* key) {
+            if (obj) {
+              if (doc[key] == true) lv_obj_add_state(obj, LV_STATE_CHECKED);
+              else lv_obj_clear_state(obj, LV_STATE_CHECKED);
+            }
+          };
+
+          setCB(ui_CheckboxDHCP, "dhcp");
+          setCB(ui_Checkbox1000, "1000");
+          setCB(ui_Checkbox2000, "2000");
+          setCB(ui_Checkbox5000, "5000");
+          setCB(ui_Checkbox10000, "10000");
+          setCB(ui_Checkbox20000, "20000");
+          setCB(ui_Checkbox50000, "50000");
+          setCB(ui_Checkbox100000, "100000");
+          setCB(ui_Checkbox200000, "200000");
+          setCB(ui_Checkbox500000, "500000");
+      }
+      
     } else {
         Serial.print("Lỗi đọc JSON: ");
         Serial.println(error.f_str());
@@ -133,22 +168,76 @@ void initAndLoadConfig() {
 }
 
 // Thêm extern "C" để "báo" cho trình biên dịch rằng hàm này có thể dùng cho file .c
-extern "C" void saveConfig_c(const char* ssid, const char* pass, const char* ip) {
-    // Tạo chuỗi JSON từ các tham số truyền vào
-    StaticJsonDocument<256> doc;
-    doc["ssid"] = ssid;
-    doc["pass"] = pass;
-    doc["ipadress"] = ip;
+extern "C"{
+  // void saveConfig_c(const char* ssid, const char* pass, const char* ip) {
+  //   // Tạo chuỗi JSON từ các tham số truyền vào
+  //   StaticJsonDocument<256> doc;
+  //   doc["ssid"] = ssid;
+  //   doc["pass"] = pass;
+  //   doc["ipadress"] = ip;
 
-    File configFile = LittleFS.open("/config.json", "w");
-    if (configFile) {
-        serializeJson(doc, configFile);
-        configFile.close();
-        Serial.println("Lưu file thành công!");
-    } else {
-        Serial.println("Lỗi mở file!");
+  //   File configFile = LittleFS.open("/config.json", "w");
+  //   if (configFile) {
+  //     serializeJson(doc, configFile);
+  //     configFile.close();
+  //     Serial.println("Lưu file thành công!");
+  //   } else {
+  //     Serial.println("Lỗi mở file!");
+  //   }
+  // }
+
+  void saveConfig_c(const char* ssid, const char* pass, const char* ip, const char* gateway, const char* subnet,
+                     bool dhcp, bool m1k, bool m2k, bool m5k, 
+                     bool m10k, bool m20k, bool m50k, 
+                     bool m100k, bool m200k, bool m500k) {
+                      
+    StaticJsonDocument<1024> doc;
+    // 1. Đọc file hiện tại lên để lấy các giá trị cũ
+    File readFile = LittleFS.open("/config.json", "r");
+    if (readFile) {
+        deserializeJson(doc, readFile);
+        readFile.close();
     }
-}
+
+    // 2. Chỉ cập nhật nếu chuỗi không rỗng (bỏ qua nếu rỗng/null)
+    if (ssid && strlen(ssid) > 0) doc["ssid"] = ssid;
+    if (pass && strlen(pass) > 0) doc["pass"] = pass;
+    if (ip && strlen(ip) > 0)     doc["ipadress"] = ip;
+    if (gateway && strlen(gateway) > 0) doc["gateway"] = gateway;
+    if (subnet && strlen(subnet) > 0)   doc["subnet"] = subnet;
+    
+    // 3. Cập nhật DHCP và các mệnh giá tiền (bool luôn có giá trị)
+    doc["dhcp"] = dhcp;
+    doc["1000"] = m1k;
+    doc["2000"] = m2k;
+    doc["5000"] = m5k;
+    doc["10000"] = m10k;
+    doc["20000"] = m20k;
+    doc["50000"] = m50k;
+    doc["100000"] = m100k;
+    doc["200000"] = m200k;
+    doc["500000"] = m500k;
+
+    // 4. Ghi lại vào file
+    File writeFile = LittleFS.open("/config.json", "w");
+    if (writeFile) {
+      serializeJson(doc, writeFile);
+      writeFile.close();
+      Serial.println("Config updated successfully!");
+    } else {
+      Serial.println("Failed to write config.json");
+    }
+  }
+
+  void send_spin_now_to_all_clients() {
+    // Kiểm tra xem có client nào đang kết nối không để tránh lãng phí tài nguyên
+    if (ws.count() > 0) {
+      ws.textAll("spin_now");
+      Serial.println("Sent spin_now to all socket clients!");
+    }
+  }
+
+} 
 
 void onWsEvent(
   AsyncWebSocket *server,
@@ -187,6 +276,9 @@ void setup()
     String title = "LVGL porting example";
 
     Serial.begin(115200);
+
+    // uint32_t seed = esp_random(); 
+    // srand(seed);
 
     // 1. Khởi tạo bộ nhớ tệp trước
     if (!LittleFS.begin(true)) {
@@ -246,8 +338,25 @@ void setup()
 
     WiFi.mode(WIFI_STA);
     if (global_ssid != "" && global_ssid != "NULL") {
-        WiFi.begin(global_ssid.c_str(), global_pass.c_str());
-        Serial.printf("Bắt đầu kết nối tới: %s\n", global_ssid.c_str());
+      if (!global_dhcp) {
+        IPAddress local_IP, gateway, subnet;
+        // Chuyển đổi String sang IPAddress
+        if (local_IP.fromString(global_ip) && 
+            gateway.fromString(global_gateway) && 
+            subnet.fromString(global_subnet)) {
+            if (!WiFi.config(local_IP, gateway, subnet)) {
+                Serial.println("Cấu hình Static IP thất bại!");
+            } else {
+                Serial.println("Đã thiết lập Static IP thành công.");
+            }
+        } else {
+          Serial.println("Định dạng IP/Gateway/Subnet không hợp lệ, đang dùng DHCP mặc định.");
+        }
+      } else {
+          Serial.println("Chế độ: DHCP (Tự động nhận IP)");
+      }
+      WiFi.begin(global_ssid.c_str(), global_pass.c_str());
+      Serial.printf("Bắt đầu kết nối tới: %s\n", global_ssid.c_str());
     } else {
         Serial.println("Chưa có cấu hình WiFi. Vui lòng thiết lập qua UI.");
     }
@@ -295,7 +404,39 @@ void setup()
       Serial.println("API /admin/spin triggered -> WS broadcast spin_now");
     });
    
- 
+    server.on("/money-config", HTTP_GET, [](AsyncWebServerRequest *request) {
+      // 1. Tạo tài liệu JSON để phản hồi
+      DynamicJsonDocument responseDoc(2048);
+      JsonArray root = responseDoc.to<JsonArray>();
+
+      // 2. Duyệt qua mảng money_list để tạo đối tượng JSON
+      for (int i = 0; i < active_money_count; i++) {
+          uint32_t full_value = money_list[i] * 1000; // Quy đổi ngược lại giá trị đầy đủ
+          int weight = 100; // Trọng số cơ sở cho các mệnh giá < 100.000
+
+          // 3. Tính toán trọng số theo quy tắc của bạn
+          if (full_value == 100000) {
+              weight = 50;  // Bằng 1/2 của mức cơ sở
+          } 
+          else if (full_value == 200000) {
+              weight = 25;  // Bằng 1/2 của 100.000
+          } 
+          else if (full_value == 500000) {
+              weight = 12;  // Bằng 1/2 của 200.000 (lấy xấp xỉ)
+          }
+          // Các giá trị < 100.000 (như 10k, 20k, 50k) giữ nguyên weight = 100
+
+          // 4. Thêm vào mảng JSON
+          JsonObject obj = root.createNestedObject();
+          obj["value"] = full_value;
+          obj["weight"] = weight;
+      }
+
+      // 5. Chuyển đổi sang chuỗi và gửi phản hồi
+      String response;
+      serializeJson(root, response);
+      request->send(200, "application/json", response);
+    });
 
 }
 
