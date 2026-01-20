@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <Arduino.h>
 #include <esp_display_panel.hpp>
 
@@ -16,10 +17,12 @@
 #include <ESPAsyncWebServer.h>
 
 
+
 using namespace esp_panel::drivers;
 using namespace esp_panel::board;
 
 AsyncWebServer server(80); // Khởi tạo server ở cổng 80
+AsyncWebSocket ws("/ws");
 
 
 //----Modify extern----------
@@ -29,8 +32,13 @@ extern void lv_fs_littlefs_init(void);
 String global_ssid = "";
 String global_pass = "";
 String global_ip   = "";
+bool global_dhcp;
 
-
+//Extern "C" Variable
+extern "C"{
+  uint16_t money_list[9]; 
+  int active_money_count = 0; // Biến đếm số lượng mệnh giá được nạp
+}
 
 unsigned long lastWifiCheck = 0;
 const unsigned long wifiInterval = 2000; // Kiểm tra mỗi 2 giây
@@ -57,7 +65,17 @@ void initAndLoadConfig() {
             const char* defaultJSON = R"({
                 "ssid": "RD",
                 "pass": "Itdc@12345",
-                "ipadress": "192.168.5.100"
+                "ipadress": "192.168.5.100",
+                "dhcp": true,
+                "1000": false,
+                "2000": false,
+                "5000": false,
+                "10000": true,
+                "20000": true,
+                "50000": true,
+                "100000": true,
+                "200000": false,
+                "500000": false
             })";
             configFile.print(defaultJSON);
             configFile.close();
@@ -73,7 +91,7 @@ void initAndLoadConfig() {
     }
 
     // 4. Giải mã JSON
-    StaticJsonDocument<256> doc;
+    StaticJsonDocument<1024> doc;
     DeserializationError error = deserializeJson(doc, configFile);
 
     if (!error) {
@@ -81,9 +99,31 @@ void initAndLoadConfig() {
       global_ssid = doc["ssid"] | "";
       global_pass = doc["pass"] | "";
       global_ip   = doc["ipadress"] | "";
+      global_dhcp = doc["dhcp"] | false;
+
+      // 2. Xử lý các mệnh giá tiền
+      active_money_count = 0; // Reset bộ đếm trước khi nạp
+      // Danh sách các key cần kiểm tra
+      const char* money_keys[] = {"1000", "2000", "5000", "10000", "20000", "50000", "100000", "200000", "500000"};
+      for (const char* key : money_keys) {
+          if (doc[key] == true) {
+              // Chuyển key từ chuỗi sang số, chia cho 1000 rồi lưu vào mảng
+              uint32_t full_value = atol(key); 
+              money_list[active_money_count] = (uint16_t)(full_value / 1000);
+              active_money_count++;
+          }
+      }
+
 
       Serial.println("--- Cấu hình đã tải ---");
-      Serial.printf("SSID: %s | IP: %s\n", global_ssid.c_str(), global_ip.c_str());
+      Serial.printf("SSID: %s | IP: %s | DHCP: %s\n", 
+                      global_ssid.c_str(), global_ip.c_str(), global_dhcp ? "Bật" : "Tắt");
+      Serial.print("Mệnh giá kích hoạt (k): ");
+        for (int i = 0; i < active_money_count; i++) {
+          Serial.print(money_list[i]);
+          if (i < active_money_count - 1) Serial.print(", ");
+        }
+        Serial.println();
     } else {
         Serial.print("Lỗi đọc JSON: ");
         Serial.println(error.f_str());
@@ -110,6 +150,36 @@ extern "C" void saveConfig_c(const char* ssid, const char* pass, const char* ip)
     }
 }
 
+void onWsEvent(
+  AsyncWebSocket *server,
+  AsyncWebSocketClient *client,
+  AwsEventType type,
+  void *arg,
+  uint8_t *data,
+  size_t len
+) {
+  switch (type) {
+    case WS_EVT_CONNECT:
+      Serial.printf("WebSocket client #%u connected\n", client->id());
+      break;
+
+    case WS_EVT_DISCONNECT:
+      Serial.printf("WebSocket client #%u disconnected\n", client->id());
+      break;
+
+    case WS_EVT_DATA: {
+      AwsFrameInfo *info = (AwsFrameInfo*)arg;
+      if (info->opcode == WS_TEXT) {
+        String msg;
+        for (size_t i = 0; i < len; i++) msg += (char)data[i];
+        Serial.printf("WS recv: %s\n", msg.c_str());
+      }
+      break;
+    }
+    default:
+      break;
+  }
+}
 
 
 void setup()
@@ -201,6 +271,29 @@ void setup()
         // Gửi file index.html từ LittleFS
         request->send(LittleFS, "/index.html", "text/html");
     });
+    // Gửi Back.png
+    server.on("/Back.png", HTTP_GET, [](AsyncWebServerRequest *request){
+        request->send(LittleFS, "/Back.png", "image/png");
+    });
+
+    // Gửi But.png
+    server.on("/But.png", HTTP_GET, [](AsyncWebServerRequest *request){
+        request->send(LittleFS, "/But.png", "image/png");
+    });
+
+    // Gửi Back_H.png
+    server.on("/Back_H.png", HTTP_GET, [](AsyncWebServerRequest *request){
+        request->send(LittleFS, "/Back_H.png", "image/png");
+    });
+
+    server.on("/admin/spin", HTTP_GET, [](AsyncWebServerRequest *request) {
+      // Broadcast tới tất cả client WebSocket
+      ws.textAll("spin_now");
+      request->send(200, "application/json",
+        "{\"status\":\"ok\",\"msg\":\"spin command sent\"}"
+      );
+      Serial.println("API /admin/spin triggered -> WS broadcast spin_now");
+    });
    
  
 
@@ -211,6 +304,8 @@ void loop()
   if (shouldStartServer) {
     shouldStartServer = false; // Reset cờ ngay lập tức
     if (!serverStarted) {
+        ws.onEvent(onWsEvent);
+        server.addHandler(&ws);
         server.begin();
         serverStarted = true;
         Serial.println("AsyncWebServer started safely from Loop!");

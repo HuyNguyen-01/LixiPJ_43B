@@ -15,9 +15,10 @@ extern void saveConfig_c(const char* ssid, const char* pass, const char* ip);
 //Modify Varible
 lv_obj_t * ui_prev_screen = NULL;
 
-static const uint16_t money_list[] = {10, 20, 50, 100, 200, 500};
-#define MONEY_COUNT (sizeof(money_list) / sizeof(money_list[0]))
-
+// static const uint16_t money_list[] = {10, 20, 50, 100, 200, 500};
+// #define MONEY_COUNT (sizeof(money_list) / sizeof(money_list[0]))
+extern uint16_t money_list[9];
+extern int active_money_count;
 
 
 //Modify Function---------------------------
@@ -29,7 +30,7 @@ static const uint16_t money_list[] = {10, 20, 50, 100, 200, 500};
 void ui_RollOffline(lv_event_t * e)
 {
   
-    uint16_t value = money_list[rand() % MONEY_COUNT];
+    uint16_t value = money_list[rand() % active_money_count];
 
     /* 2. Phân tích hàng số */
     uint8_t hundreds = value / 100;
